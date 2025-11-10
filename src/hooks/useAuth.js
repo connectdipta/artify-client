@@ -1,11 +1,5 @@
-import React from 'react';
+import { useAuthCtx } from "../context/AuthProvider";
 
-const useAuth = () => {
-    return (
-        <div>
-            
-        </div>
-    );
-};
-
-export default useAuth;
+export default function useAuth() {
+  return useAuthCtx;
+}

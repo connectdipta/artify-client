@@ -2,9 +2,9 @@ import React from 'react';
 
 const AddArtwork = () => {
     return (
-        <div>
-            
-        </div>
+        <>
+            <h2 className="text-2xl font-bold">Add Artwork</h2>
+        </>
     );
 };
 

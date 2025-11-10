@@ -2,9 +2,9 @@ import React from 'react';
 
 const MyGallery = () => {
     return (
-        <div>
-            
-        </div>
+        <>
+            <h2 className="text-2xl font-bold">My Gallery</h2>
+        </>
     );
 };
 
