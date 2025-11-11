@@ -5,32 +5,52 @@ import { getAuth } from "firebase/auth";
  * Fetch all artworks
  */
 export const fetchArtworks = async () => {
-  const res = await api.get("/artworks");
-  return res.data;
+  try {
+    const res = await api.get("/artworks");
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch artworks:", err);
+    throw err;
+  }
 };
 
 /**
  * Fetch featured artworks
  */
 export const fetchFeatured = async () => {
-  const res = await api.get("/artworks/featured");
-  return res.data;
+  try {
+    const res = await api.get("/artworks/featured");
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch featured artworks:", err);
+    throw err;
+  }
 };
 
 /**
  * Fetch explore artworks with filters
  */
 export const fetchExplore = async (params) => {
-  const res = await api.get("/artworks/explore", { params });
-  return res.data;
+  try {
+    const res = await api.get("/artworks/explore", { params });
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch explore artworks:", err);
+    throw err;
+  }
 };
 
 /**
  * Search artworks
  */
 export const searchArtworks = async (params) => {
-  const res = await api.get("/artworks/search", { params });
-  return res.data;
+  try {
+    const res = await api.get("/artworks/search", { params });
+    return res.data;
+  } catch (err) {
+    console.error("Failed to search artworks:", err);
+    throw err;
+  }
 };
 
 /**
@@ -82,24 +102,39 @@ export const deleteArtwork = async (id) => {
  * Like an artwork (public)
  */
 export const likeArtwork = async (id) => {
-  const res = await api.patch(`/artworks/${id}/like`);
-  return res.data;
+  try {
+    const res = await api.patch(`/artworks/${id}/like`);
+    return res.data;
+  } catch (err) {
+    console.error("Failed to like artwork:", err);
+    throw err;
+  }
 };
 
 /**
  * Fetch single artwork by ID
  */
 export const getArtworkById = async (id) => {
-  const res = await api.get("/artworks/search", { params: { _id: id } });
-  return res.data[0];
+  try {
+    const res = await api.get(`/artworks/${id}`);
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch artwork by ID:", err);
+    throw err;
+  }
 };
 
 /**
  * Fetch artworks for a specific user
  */
 export const getUserArtworks = async (email) => {
-  const res = await api.get(`/artworks/user/${email}`);
-  return res.data;
+  try {
+    const res = await api.get(`/artworks/user/${email}`);
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch user artworks:", err);
+    throw err;
+  }
 };
 
 /**
@@ -116,5 +151,35 @@ export const addFavorite = async (artworkId) => {
     { artworkId },
     { headers: { Authorization: `Bearer ${token}` } }
   );
+  return res.data;
+};
+
+/**
+ * Get favorites for logged-in user (requires Firebase token)
+ */
+export const getFavorites = async () => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (!user) throw new Error("User not authenticated");
+
+  const token = await user.getIdToken();
+  const res = await api.get("/favorites", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+
+/**
+ * Remove favorite by ID (requires Firebase token)
+ */
+export const removeFavorite = async (id) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (!user) throw new Error("User not authenticated");
+
+  const token = await user.getIdToken();
+  const res = await api.delete(`/favorites/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return res.data;
 };

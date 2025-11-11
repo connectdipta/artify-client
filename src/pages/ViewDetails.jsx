@@ -9,19 +9,18 @@ export default function ViewDetails() {
   const [artwork, setArtwork] = useState(null);
   const [loading, setLoading] = useState(true);
   const [favorited, setFavorited] = useState(false);
-  const [liked, setLiked] = useState(false); // track if user already liked
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     const fetchArtwork = async () => {
       try {
+        if (!id) throw new Error("Missing artwork ID");
         const data = await getArtworkById(id);
+        if (!data || !data._id) throw new Error("Artwork not found");
         setArtwork(data);
 
-        // Check localStorage to persist like state per artwork
         const likedArtworks = JSON.parse(localStorage.getItem("likedArtworks") || "[]");
-        if (likedArtworks.includes(id)) {
-          setLiked(true);
-        }
+        if (likedArtworks.includes(id)) setLiked(true);
       } catch (err) {
         console.error("Error fetching artwork:", err);
         Swal.fire("Error", "Failed to load artwork details", "error");
@@ -33,17 +32,11 @@ export default function ViewDetails() {
   }, [id]);
 
   const handleLike = async () => {
-    if (liked) {
-      Swal.fire("Info", "You already liked this artwork", "info");
-      return;
-    }
-
+    if (liked) return Swal.fire("Info", "You already liked this artwork", "info");
     try {
       await likeArtwork(id);
       setArtwork((prev) => ({ ...prev, likes: (prev.likes ?? 0) + 1 }));
       setLiked(true);
-
-      // Save to localStorage so refresh still remembers
       const likedArtworks = JSON.parse(localStorage.getItem("likedArtworks") || "[]");
       localStorage.setItem("likedArtworks", JSON.stringify([...likedArtworks, id]));
     } catch (err) {
@@ -71,23 +64,20 @@ export default function ViewDetails() {
         </Link>
       </div>
     );
-
+console.log("Route param ID:", id);
   return (
     <div className="max-w-3xl mx-auto p-6 bg-base-100 shadow rounded">
-      {/* Artwork Image */}
       <img
         src={artwork.imageUrl || "/placeholder.png"}
         alt={artwork.title}
         className="w-full h-96 object-cover rounded mb-6"
       />
 
-      {/* Artwork Info */}
       <h2 className="text-3xl font-bold mb-2">{artwork.title}</h2>
       <p className="text-gray-600 mb-2">Category: {artwork.category}</p>
       <p className="text-gray-600 mb-2">Medium: {artwork.medium || "N/A"}</p>
       <p className="mb-6">{artwork.description || "No description provided."}</p>
 
-      {/* Artist Info */}
       <div className="border-t pt-4 mt-4">
         <h3 className="text-xl font-semibold mb-2">Artist Info</h3>
         <p>Name: {artwork.userName || "Anonymous"}</p>
@@ -102,20 +92,11 @@ export default function ViewDetails() {
         {artwork.totalArtworks && <p>Total artworks: {artwork.totalArtworks}</p>}
       </div>
 
-      {/* Actions */}
       <div className="flex gap-4 mt-6">
-        <button
-          onClick={handleLike}
-          className="btn btn-primary"
-          disabled={liked}
-        >
+        <button onClick={handleLike} className="btn btn-primary" disabled={liked}>
           👍 Like ({artwork.likes ?? 0})
         </button>
-        <button
-          onClick={handleFavorite}
-          disabled={favorited}
-          className="btn btn-secondary"
-        >
+        <button onClick={handleFavorite} disabled={favorited} className="btn btn-secondary">
           ❤️ {favorited ? "Favorited" : "Add to Favorites"}
         </button>
         <Link to="/explore" className="btn btn-outline">
