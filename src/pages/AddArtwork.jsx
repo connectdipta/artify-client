@@ -54,99 +54,124 @@ export default function AddArtwork() {
   if (loading) return <Spinner />;
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-base-100 shadow rounded">
-      <h2 className="text-2xl font-bold mb-4">➕ Add New Artwork</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <label className="form-control">
-          <span className="label-text">Title</span>
-          <input
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            className="input input-bordered"
-            required
-          />
-        </label>
+    <div className="max-w-2xl mx-auto p-8 bg-base-100 rounded-xl shadow-lg">
+  <h2 className="text-3xl font-bold text-center text-primary mb-6">
+    ➕ Add New Artwork
+  </h2>
 
-        <label className="form-control">
-          <span className="label-text">Image URL</span>
-          <input
-            name="imageUrl"
-            value={form.imageUrl}
-            onChange={handleChange}
-            className="input input-bordered"
-            required
-          />
-        </label>
-
-        <label className="form-control">
-          <span className="label-text">Category</span>
-          <input
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            className="input input-bordered"
-            required
-          />
-        </label>
-
-        <label className="form-control">
-          <span className="label-text">Medium / Tools</span>
-          <input
-            name="medium"
-            value={form.medium}
-            onChange={handleChange}
-            className="input input-bordered"
-          />
-        </label>
-
-        <label className="form-control">
-          <span className="label-text">Description</span>
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            className="textarea textarea-bordered"
-            rows={3}
-          />
-        </label>
-
-        <label className="form-control">
-          <span className="label-text">Dimensions (optional)</span>
-          <input
-            name="dimensions"
-            value={form.dimensions}
-            onChange={handleChange}
-            className="input input-bordered"
-          />
-        </label>
-
-        <label className="form-control">
-          <span className="label-text">Price (optional)</span>
-          <input
-            name="price"
-            value={form.price}
-            onChange={handleChange}
-            type="number"
-            className="input input-bordered"
-          />
-        </label>
-
-        <label className="form-control">
-          <span className="label-text">Visibility</span>
-          <select
-            name="visibility"
-            value={form.visibility}
-            onChange={handleChange}
-            className="select select-bordered"
-          >
-            <option value="Public">Public</option>
-            <option value="Private">Private</option>
-          </select>
-        </label>
-
-        <button type="submit" className="btn btn-primary w-full">Add Artwork</button>
-      </form>
+  <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6">
+    {/* Title */}
+    <div>
+      <label className="label font-semibold">Title</label>
+      <input
+        name="title"
+        value={form.title}
+        onChange={handleChange}
+        className="input input-bordered w-full"
+        placeholder="Enter artwork title"
+        required
+      />
     </div>
+
+    {/* Image URL */}
+    <div>
+      <label className="label font-semibold">Image URL</label>
+      <input
+        name="imageUrl"
+        value={form.imageUrl}
+        onChange={handleChange}
+        className="input input-bordered w-full"
+        placeholder="https://example.com/art.jpg"
+        required
+      />
+    </div>
+
+    {/* Category */}
+    <div>
+      <label className="label font-semibold">Category</label>
+      <input
+        name="category"
+        value={form.category}
+        onChange={handleChange}
+        className="input input-bordered w-full"
+        placeholder="e.g. Painting, Sculpture"
+        required
+      />
+    </div>
+
+    {/* Medium / Tools */}
+    <div>
+      <label className="label font-semibold">Medium / Tools</label>
+      <input
+        name="medium"
+        value={form.medium}
+        onChange={handleChange}
+        className="input input-bordered w-full"
+        placeholder="Oil, Acrylic, Digital..."
+      />
+    </div>
+
+    {/* Description */}
+    <div>
+      <label className="label font-semibold">Description</label>
+      <textarea
+        name="description"
+        value={form.description}
+        onChange={handleChange}
+        className="textarea textarea-bordered w-full"
+        rows={3}
+        placeholder="Tell us about your artwork..."
+      />
+    </div>
+
+    {/* Dimensions */}
+    <div>
+      <label className="label font-semibold">Dimensions (optional)</label>
+      <input
+        name="dimensions"
+        value={form.dimensions}
+        onChange={handleChange}
+        className="input input-bordered w-full"
+        placeholder="e.g. 24×36 inches"
+      />
+    </div>
+
+    {/* Price */}
+    <div>
+      <label className="label font-semibold">Price (optional)</label>
+      <input
+        name="price"
+        value={form.price}
+        onChange={handleChange}
+        type="number"
+        className="input input-bordered w-full"
+        placeholder="Enter price in USD"
+      />
+    </div>
+
+    {/* Visibility */}
+    <div>
+      <label className="label font-semibold">Visibility</label>
+      <select
+        name="visibility"
+        value={form.visibility}
+        onChange={handleChange}
+        className="select select-bordered w-full"
+      >
+        <option value="Public">🌍 Public</option>
+        <option value="Private">🔒 Private</option>
+      </select>
+    </div>
+
+    {/* Submit Button */}
+    <button
+      type="submit"
+      className="btn btn-primary w-full text-lg font-semibold tracking-wide"
+    >
+      🚀 Add Artwork
+    </button>
+  </form>
+</div>
+
   );
 }
