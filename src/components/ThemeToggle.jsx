@@ -1,21 +1,22 @@
-import React from 'react';
 import { useEffect, useState } from "react";
 
 const ThemeToggle = () => {
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "mytheme");
+  const [theme, setTheme] = useState("light");
 
   useEffect(() => {
-    document.querySelector("html").setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
+    document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  const toggleTheme = () => {
+    setTheme(prev => (prev === "light" ? "dark" : "light"));
+  };
+
   return (
-    <button
-      className="btn btn-sm btn-outline"
-      onClick={() => setTheme(theme === "mytheme" ? "dark" : "mytheme")}
-    >
-      {theme === "mytheme" ? "🌙 Dark" : "☀️ Light"}
-    </button>
+    <label className="swap swap-rotate">
+      <input type="checkbox" onChange={toggleTheme} checked={theme === "dark"} />
+      <div className="swap-on text-xl">🌙</div>
+      <div className="swap-off text-xl">☀️</div>
+    </label>
   );
 };
 

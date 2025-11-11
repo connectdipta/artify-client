@@ -1,9 +1,17 @@
+/* 1. Import Google Fonts first */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+/* 2. Tailwind base */
 @import "tailwindcss";
+
+/* 3. DaisyUI plugin */
 @plugin "daisyui";
+
+/* 4. DaisyUI theme */
 @plugin "daisyui/theme" {
   name: "mytheme";
-  default: true; /* set as default */
-  prefersdark: false; /* default dark mode off */
+  default: true;
+  prefersdark: false;
   color-scheme: light;
 
   --color-base-100: oklch(98% 0.02 240);
@@ -52,8 +60,7 @@
   --noise: 0;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-
+/* 5. Global font styles */
 body {
   font-family: "Inter", sans-serif;
 }
