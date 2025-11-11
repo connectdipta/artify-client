@@ -1,67 +1,42 @@
-import React from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
+import React, { useEffect, useState } from "react";
+import { fetchFeatured } from "../services/artworks";
+import Spinner from "../components/Spinner";
+import ArtworkCard from "../components/ArtworkCard";
+import HeroSlider from "../components/HeroSlider";
 
-const slides = [
-  {
-    image: "/images/art1.jpg",
-    title: "🎨 Abstract Dreams",
-    description: "Explore the surreal world of color and form.",
-  },
-  {
-    image: "/images/art2.jpg",
-    title: "🧑‍🎨 Meet Dipto",
-    description: "Discover expressive portraits from rising talents.",
-  },
-  {
-    image: "/images/art3.jpg",
-    title: "💻 Digital Renaissance",
-    description: "Celebrate the fusion of technology and creativity.",
-  },
-];
+export default function Home() {
+  const [artworks, setArtworks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const Home = () => {
+  useEffect(() => {
+    let mounted = true;
+    fetchFeatured()
+      .then(data => {
+        if (mounted) setArtworks(data);
+      })
+      .catch(err => console.error("Error fetching artworks:", err))
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+    return () => { mounted = false; };
+  }, []);
+
+  if (loading) return <Spinner />;
+
   return (
-    <div className="px-4 py-8 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-6">Welcome to Artify</h1>
-      <p className="text-center text-lg text-base-content mb-10">
-        Discover, share, and celebrate creative artworks from around the world.
-      </p>
+    <div className="space-y-10">
+      {/* Hero slider at the top */}
+      <HeroSlider />
 
-      {/* 🎨 Auto Slider */}
-      <Swiper
-        spaceBetween={30}
-        centeredSlides={true}
-        autoplay={{
-          delay: 3000,
-          disableOnInteraction: false,
-        }}
-        pagination={{ clickable: true }}
-        navigation={true}
-        modules={[Autoplay, Pagination, Navigation]}
-        className="rounded-lg shadow-lg"
-      >
-        {slides.map((slide, index) => (
-          <SwiperSlide key={index}>
-            <div className="relative">
-              <img
-                src={slide.image}
-                alt={slide.title}
-                className="w-full h-[400px] object-cover rounded-lg"
-              />
-              <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white p-4 w-full">
-                <h2 className="text-xl font-bold">{slide.title}</h2>
-                <p className="text-sm">{slide.description}</p>
-              </div>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      {/* Featured artworks section */}
+      <section>
+        <h2 className="text-2xl font-bold mb-6 text-center">Featured Artworks</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {artworks.map(art => (
+            <ArtworkCard key={art._id} artwork={art} />
+          ))}
+        </div>
+      </section>
     </div>
   );
-};
-
-export default Home;
+}
