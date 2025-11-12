@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { fetchExplore, searchArtworks } from "../services/artworks";
 import Swal from "sweetalert2";
+import ArtworkCard from "../components/ArtworkCard";
+import { FiSearch } from "react-icons/fi"; 
+import Spinner from "../components/Spinner"; 
 
 const Explore = () => {
   const [artworks, setArtworks] = useState([]);
@@ -37,63 +39,49 @@ const Explore = () => {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-center">📚 Explore Artworks</h2>
+   <div className="container mx-auto px-4 py-10 min-h-screen">
+    
+    {/* 1. HEADER: Use the theme gradient */}
+    <h2 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+      Explore Artworks
+    </h2>
 
-      {/* Search Bar */}
-      <form
-        onSubmit={handleSearch}
-        className="flex justify-center gap-2 mb-6"
-      >
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="input input-bordered w-1/2"
-          placeholder="Search by title or artist..."
-        />
-        <button type="submit" className="btn btn-primary">
-          🔍 Search
-        </button>
-      </form>
+    {/* 2. SEARCH BAR: Make it cleaner and theme-aware */}
+    <form
+      onSubmit={handleSearch}
+      className="flex justify-center gap-0 mb-12 max-w-lg mx-auto"
+    >
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        // Use input-primary and remove the rounded-right
+        className="input input-bordered input-primary w-full rounded-r-none"
+        placeholder="Search by title or artist..."
+      />
+      {/* Use a button with just an icon, remove rounded-left */}
+      <button type="submit" className="btn btn-primary rounded-l-none">
+        <FiSearch className="text-lg" />
+      </button>
+    </form>
 
-      {/* Loading State */}
-      {loading ? (
-        <p className="text-center text-gray-500">Loading artworks...</p>
-      ) : artworks.length === 0 ? (
-        <p className="text-center text-gray-500">No artworks found.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {artworks.map((art) => (
-            <div
-              key={art._id}
-              className="card bg-base-100 shadow-md hover:shadow-lg transition"
-            >
-              <figure>
-                <img
-                  src={art.imageUrl || "/placeholder.png"}
-                  alt={art.title}
-                  className="w-full h-48 object-cover"
-                />
-              </figure>
-              <div className="card-body">
-                <h3 className="card-title">{art.title}</h3>
-                <p className="text-sm text-gray-600">
-                  👤 {art.userName || "Unknown Artist"}
-                </p>
-                <p className="text-sm">📂 {art.category}</p>
-                <p className="text-sm">👍 {art.likes ?? 0} likes</p>
-                <div className="card-actions justify-end mt-2">
-                  <Link to={`/artworks/${art._id}`} className="btn btn-sm btn-primary">
-                    View Details
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    {/* 3. LOADING/EMPTY STATES: Use your Spinner and a cleaner "No results" view */}
+    {loading ? (
+      <Spinner /> // Use your actual Spinner component
+    ) : artworks.length === 0 ? (
+      <div className="text-center text-base-content/70 py-16">
+        <h3 className="text-2xl font-semibold">No Artworks Found</h3>
+        <p>Try searching for something else or check back later.</p>
+      </div>
+    ) : (
+      // 4. GRID: This is your existing grid of cards
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        {artworks.map((art) => (
+          <ArtworkCard key={art._id} artwork={art} />
+        ))}
+      </div>
+    )}
+  </div>
   );
 };
 

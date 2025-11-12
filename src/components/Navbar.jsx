@@ -4,6 +4,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import Swal from "sweetalert2";
 import { useEffect, useState, useRef } from "react";
+import { FiLogOut } from "react-icons/fi"; // For a nice logout icon
 
 const Navbar = () => {
   const { user, loading } = useAuth();
@@ -14,10 +15,10 @@ const Navbar = () => {
     return prefersDark ? "dark" : "light";
   });
 
+  // This custom hook for the dropdown is great! We'll keep it.
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close menu if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -28,7 +29,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Apply & persist theme
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
@@ -36,56 +36,78 @@ const Navbar = () => {
 
   const toggleTheme = () => setTheme(prev => (prev === "light" ? "dark" : "light"));
 
-  const navLinkClass = ({ isActive }) =>
-    `btn btn-ghost ${isActive ? "text-primary font-semibold" : "text-base-content"}`;
-
   const handleLogout = async () => {
     await signOut(auth);
     Swal.fire("Logged out", "You have been signed out", "info");
     setMenuOpen(false);
   };
 
+  // --- DESIGN UPGRADE: More stylish nav links ---
+  const navLinkClass = ({ isActive }) =>
+    `px-3 py-2 rounded-lg transition-colors ${
+      isActive
+        ? "text-primary font-bold bg-primary/10" // Active: Branded bg color
+        : "text-base-content/80 hover:text-primary" // Inactive: Muted, with hover
+    }`;
+  
+  // --- DESIGN UPGRADE: Better mobile tap targets ---
+  const mobileNavLinkClass = ({ isActive }) =>
+    `w-full text-left p-3 rounded-lg ${
+      isActive
+        ? "bg-primary text-primary-content font-bold" // Mobile Active
+        : "hover:bg-base-300" // Mobile Inactive
+    }`;
+
+
   if (loading) {
     return (
-      <div className="navbar bg-base-100 shadow-sm">
+      <div className="navbar bg-base-100 shadow-md px-4 sm:px-8">
         <div className="navbar-start">
-          <Link to="/" className="btn btn-ghost text-xl font-bold">Artify</Link>
+          <span className="text-xl font-bold text-base-content/50">Artify</span>
         </div>
         <div className="navbar-end">
-          <span className="loading loading-spinner loading-sm"></span>
+          <span className="loading loading-spinner text-primary"></span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="navbar bg-base-100 shadow-sm">
+    // --- DESIGN UPGRADE: Added sticky, shadow-md, and more padding ---
+    <div className="navbar bg-base-100 shadow-md px-4 sm:px-8 sticky top-0 z-50">
+      
       {/* START */}
       <div className="navbar-start">
         <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden -ml-4">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" />
             </svg>
           </div>
-          <ul tabIndex={-1} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow">
-            <li><NavLink to="/" className={navLinkClass}>Home</NavLink></li>
-            <li><NavLink to="/explore" className={navLinkClass}>Explore Artworks</NavLink></li>
+          {/* --- DESIGN UPGRADE: Mobile menu now uses the better tap-target class --- */}
+          <ul tabIndex={0} className="menu menu-sm dropdown-content bg-base-200 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+            <li><NavLink to="/" className={mobileNavLinkClass}>Home</NavLink></li>
+            <li><NavLink to="/explore" className={mobileNavLinkClass}>Explore Artworks</NavLink></li>
             {user && (
               <>
-                <li><NavLink to="/add-artwork" className={navLinkClass}>Add Artwork</NavLink></li>
-                <li><NavLink to="/my-gallery" className={navLinkClass}>My Gallery</NavLink></li>
-                <li><NavLink to="/my-favorites" className={navLinkClass}>My Favorites</NavLink></li>
+                <div className="divider my-1"></div>
+                <li><NavLink to="/add-artwork" className={mobileNavLinkClass}>Add Artwork</NavLink></li>
+                <li><NavLink to="/my-gallery" className={mobileNavLinkClass}>My Gallery</NavLink></li>
+                <li><NavLink to="/my-favorites" className={mobileNavLinkClass}>My Favorites</NavLink></li>
               </>
             )}
           </ul>
         </div>
-        <Link to="/" className="btn btn-ghost text-xl font-bold">Artify</Link>
+        {/* --- DESIGN UPGRADE: Gradient logo to match theme --- */}
+        <Link to="/" className="btn btn-ghost text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent !pl-0">
+          Artify
+        </Link>
       </div>
 
       {/* CENTER */}
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal gap-2">
+        <ul className="menu menu-horizontal gap-1">
+          {/* --- DESIGN UPGRADE: Using the new stylish navLinkClass --- */}
           <li><NavLink to="/" className={navLinkClass}>Home</NavLink></li>
           <li><NavLink to="/explore" className={navLinkClass}>Explore Artworks</NavLink></li>
           {user && (
@@ -100,7 +122,7 @@ const Navbar = () => {
 
       {/* END */}
       <div className="navbar-end gap-3">
-        {/* Theme toggle */}
+        {/* Theme toggle - your implementation is perfect */}
         <label className="swap swap-rotate">
           <input
             type="checkbox"
@@ -115,8 +137,9 @@ const Navbar = () => {
         {/* Auth or dropdown */}
         {!user ? (
           <>
-            <Link to="/login" className="btn btn-outline btn-sm">Login</Link>
-            <Link to="/register" className="btn btn-primary btn-sm">Register</Link>
+            {/* --- DESIGN UPGRADE: Using secondary color & rounded-full --- */}
+            <Link to="/login" className="btn btn-secondary rounded-full btn-sm px-5">Login</Link>
+            <Link to="/register" className="btn btn-primary rounded-full btn-sm px-5">Register</Link>
           </>
         ) : (
           <div className="relative" ref={dropdownRef}>
@@ -125,18 +148,37 @@ const Navbar = () => {
               className="btn btn-ghost btn-circle avatar"
               onClick={() => setMenuOpen(prev => !prev)}
             >
-              <div className="w-10 rounded-full">
+              {/* --- DESIGN UPGRADE: Avatar ring to match theme --- */}
+              <div className="w-10 rounded-full ring-2 ring-primary ring-offset-base-100 ring-offset-2">
                 <img src={user.photoURL || "/default-avatar.png"} alt="User" />
               </div>
             </label>
 
             {menuOpen && (
+              // --- DESIGN UPGRADE: Using bg-base-200 for better contrast ---
               <ul
                 tabIndex={0}
-                className="absolute top-full right-0 mt-2 z-50 p-2 shadow bg-base-100 rounded-box w-52"
+                className="absolute top-full right-0 mt-2 z-50 p-2 shadow bg-base-200 rounded-box w-60"
               >
-                <li><span className="text-sm font-semibold">{user.displayName || "Welcome!"}</span></li>
-                <li><button onClick={handleLogout}>Logout</button></li>
+                <li className="p-2">
+                  <span className="font-bold text-base-content text-center block truncate">
+                    {user.displayName || "Welcome!"}
+                  </span>
+                  <span className="text-xs text-base-content/70 text-center block truncate">
+                    {user.email}
+                  </span>
+                </li>
+                <div className="divider my-0"></div>
+                <li>
+                  {/* --- DESIGN UPGRADE: Cleaner logout button with icon --- */}
+                  <button 
+                    onClick={handleLogout} 
+                    className="btn btn-ghost text-error btn-sm w-full justify-start"
+                  >
+                    <FiLogOut />
+                    Logout
+                  </button>
+                </li>
               </ul>
             )}
           </div>

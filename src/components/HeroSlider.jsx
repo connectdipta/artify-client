@@ -1,67 +1,154 @@
-import React from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination, Navigation, EffectFade } from 'swiper/modules';
+import { useTypewriter, Cursor } from 'react-simple-typewriter';
+import { FiArrowRight } from 'react-icons/fi';
+
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import 'swiper/css/effect-fade';
+
+const swiperStyles = `
+  :root {
+    --swiper-theme-color: oklch(65% 0.45 260); 
+  }
+  .swiper-pagination-bullet {
+    background-color: white;
+    opacity: 0.6;
+  }
+  .swiper-pagination-bullet-active {
+    background-color: var(--swiper-theme-color) !important;
+  }
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: var(--swiper-theme-color) !important;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    width: 40px !important;
+    height: 40px !important;
+    transition: all 0.2s ease-in-out;
+  }
+  .swiper-button-next:after,
+  .swiper-button-prev:after {
+    font-size: 1.25rem !important;
+    font-weight: 900;
+  }
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    background-color: white;
+    transform: scale(1.1);
+  }
+`;
 
 const slides = [
   {
-    image: "/images/art1.jpg",
-    title: "🎨 Abstract Dreams",
+    image: "https://i.pinimg.com/1200x/bd/11/15/bd1115329e697cf41a21bae1ac712f33.jpg",
+    title: "Abstract Dreams",
     description: "Explore the surreal world of color and form.",
+    buttonText: "Explore Now",
+    buttonLink: "/explore",
   },
   {
-    image: "/images/art2.jpg",
-    title: "🧑‍🎨 Meet Dipto",
-    description: "Discover expressive portraits from rising talents.",
-  },
-  {
-    image: "/images/art3.jpg",
-    title: "💻 Digital Renaissance",
+    image: "https://i.pinimg.com/1200x/b3/76/a7/b376a73b927d815ed262d496a6566f85.jpg",
+    title: "Digital Renaissance",
     description: "Celebrate the fusion of technology and creativity.",
+    buttonText: "See The Gallery",
+    buttonLink: "/explore",
+  },
+  {
+    image: "https://i.pinimg.com/736x/13/d9/47/13d94747f7421a36c81e01b9b6266f61.jpg",
+    title: "Share Your Vision",
+    description: "Join our community and upload your own masterpieces.",
+    buttonText: "Add Artwork",
+    buttonLink: "/add-artwork",
   },
 ];
 
-const HeroSlider = () => {
-  return (
-    <div className="px-4 py-8 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-6">Welcome to Artify</h1>
-      <p className="text-center text-lg text-base-content mb-10">
-        Discover, share, and celebrate creative artworks from around the world.
-      </p>
+// --- THE FIRST FIX ---
+// 'isActive' prop is no longer needed
+const SlideContent = ({ title, description, buttonText, buttonLink }) => {
+  // The 'words' array is now always populated when the component mounts
+  const [titleText] = useTypewriter({
+    words: [title],
+    loop: 1,
+    typeSpeed: 70,
+  });
 
-      {/* 🎨 Auto Slider */}
+  const [descText] = useTypewriter({
+    words: [description],
+    loop: 1,
+    typeSpeed: 30,
+    delaySpeed: 1500,
+  });
+
+  return (
+   <div className="hero-content text-center text-neutral-content">
+  <div className="max-w-md">
+    <h1 className="mb-5 text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-lg">
+      {titleText}
+      <Cursor cursorColor="oklch(var(--color-secondary))" />
+    </h1>
+    
+    <p className="mb-5 text-lg text-base-100/90 drop-shadow-md">
+      {descText}
+      <Cursor cursorStyle='_' />
+    </p>
+    
+    <Link
+      to={buttonLink}
+      className="btn btn-primary rounded-full shadow-lg hover:scale-105 transition-transform"
+    >
+      {buttonText}
+      <FiArrowRight className="ml-1" />
+    </Link>
+  </div>
+</div>
+  );
+};
+
+export default function HeroSlider() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  return (
+    <div className="container mx-auto px-4 pt-4">
+      <style>{swiperStyles}</style>
+
       <Swiper
         spaceBetween={30}
         centeredSlides={true}
-        autoplay={{
-          delay: 3000,
-          disableOnInteraction: false,
-        }}
+        loop={true}
+        effect={'fade'}
+        autoplay={{ delay: 5000, disableOnInteraction: false }}
         pagination={{ clickable: true }}
         navigation={true}
-        modules={[Autoplay, Pagination, Navigation]}
-        className="rounded-lg shadow-lg"
+        modules={[Autoplay, Pagination, Navigation, EffectFade]}
+        className="w-full h-[400px] md:h-[550px] rounded-2xl shadow-xl"
+        onActiveIndexChange={(swiper) => {
+          setActiveIndex(swiper.realIndex);
+        }}
       >
         {slides.map((slide, index) => (
           <SwiperSlide key={index}>
-            <div className="relative">
-              <img
-                src={slide.image}
-                alt={slide.title}
-                className="w-full h-[400px] object-cover rounded-lg"
-              />
-              <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white p-4 w-full">
-                <h2 className="text-xl font-bold">{slide.title}</h2>
-                <p className="text-sm">{slide.description}</p>
-              </div>
+            <div
+              className="hero w-full h-full"
+              style={{ backgroundImage: `url(${slide.image})` }}
+            >
+              <div className="hero-overlay bg-opacity-60 rounded-2xl"></div>
+              {index === activeIndex && (
+                <SlideContent 
+                  title={slide.title}
+                  description={slide.description}
+                  buttonText={slide.buttonText}
+                  buttonLink={slide.buttonLink}
+                />
+              )}
+
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
     </div>
   );
-};
-
-export default HeroSlider;
+}
