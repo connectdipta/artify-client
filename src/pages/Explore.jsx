@@ -41,12 +41,11 @@ const Explore = () => {
   return (
    <div className="container mx-auto px-4 py-10 min-h-screen">
     
-    {/* 1. HEADER: Use the theme gradient */}
     <h2 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
       Explore Artworks
     </h2>
 
-    {/* 2. SEARCH BAR: Make it cleaner and theme-aware */}
+  
     <form
       onSubmit={handleSearch}
       className="flex justify-center gap-0 mb-12 max-w-lg mx-auto"
@@ -55,19 +54,19 @@ const Explore = () => {
         type="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        // Use input-primary and remove the rounded-right
+       
         className="input input-bordered input-primary w-full rounded-r-none"
         placeholder="Search by title or artist..."
       />
-      {/* Use a button with just an icon, remove rounded-left */}
+    
       <button type="submit" className="btn btn-primary rounded-l-none">
         <FiSearch className="text-lg" />
       </button>
     </form>
 
-    {/* 3. LOADING/EMPTY STATES: Use your Spinner and a cleaner "No results" view */}
+  
     {loading ? (
-      <Spinner /> // Use your actual Spinner component
+      <Spinner /> 
     ) : artworks.length === 0 ? (
       <div className="text-center text-base-content/70 py-16">
         <h3 className="text-2xl font-semibold">No Artworks Found</h3>

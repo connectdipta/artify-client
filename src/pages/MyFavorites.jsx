@@ -4,15 +4,29 @@ import useAuth from "../hooks/useAuth";
 import { getAuth } from "firebase/auth";
 import api from "../api";
 import { Link } from "react-router-dom";
+import Spinner from "../components/Spinner";
+import { FiEye, FiX, FiStar } from "react-icons/fi";
+
+const getSwalTheme = () => {
+  const currentTheme = localStorage.getItem("theme") || "light";
+  if (currentTheme === "dark") {
+    return { background: "#2A2F3A", color: "#ffffff" };
+  }
+  return {
+    background: "oklch(98% 0.02 250)",
+    color: "oklch(20% 0.07 250)",
+  };
+};
 
 const MyFavorites = () => {
   const { user, loading } = useAuth();
   const [favorites, setFavorites] = useState([]);
+  const [pageLoading, setPageLoading] = useState(true);
 
-  // Fetch favorites for logged-in user
   useEffect(() => {
     if (!user?.email) return;
 
+    setPageLoading(true);
     const fetchFavorites = async () => {
       try {
         const auth = getAuth();
@@ -22,20 +36,28 @@ const MyFavorites = () => {
         });
         setFavorites(res.data);
       } catch (err) {
-        Swal.fire("Error", "Failed to load favorites", "error");
+        Swal.fire({
+          title: "Error",
+          text: "Failed to load favorites",
+          icon: "error",
+          ...getSwalTheme(),
+        });
+      } finally {
+        setPageLoading(false);
       }
     };
 
     fetchFavorites();
   }, [user]);
 
-  // Handle unfavorite
   const handleUnfavorite = async (id) => {
     const result = await Swal.fire({
       title: "Remove from favorites?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Yes, remove",
+      confirmButtonColor: "oklch(var(--color-error))",
+      ...getSwalTheme(),
     });
 
     if (result.isConfirmed) {
@@ -46,59 +68,90 @@ const MyFavorites = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFavorites((prev) => prev.filter((fav) => fav._id !== id));
-        Swal.fire("Removed!", "Artwork removed from favorites.", "success");
+        Swal.fire({
+          title: "Removed!",
+          text: "Artwork removed from favorites.",
+          icon: "success",
+          ...getSwalTheme(),
+        });
       } catch (err) {
-        Swal.fire("Error", "Failed to remove favorite", "error");
+        Swal.fire({
+          title: "Error",
+          text: "Failed to remove favorite",
+          icon: "error",
+          ...getSwalTheme(),
+        });
       }
     }
   };
 
-  if (loading) {
-    return <p className="text-center mt-10">Loading your favorites...</p>;
+  if (loading || pageLoading) {
+    return <Spinner />;
   }
 
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-center">❤️ My Favorites</h2>
+    <div className="container mx-auto p-4 py-10 min-h-screen">
+      <h2 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+        My Favorites
+      </h2>
 
       {favorites.length === 0 ? (
-        <p className="text-center text-gray-500">
-          You haven’t added any favorites yet.
-        </p>
+        <div className="text-center text-base-content/70 py-16">
+          <h3 className="text-2xl font-semibold">No favorites yet</h3>
+          <p className="mb-6">
+            Explore artworks and click the star to save them here.
+          </p>
+          <Link
+            to="/explore"
+            className="btn btn-primary btn-lg rounded-full"
+          >
+            <FiStar className="mr-2" /> Start Exploring
+          </Link>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {favorites.map((fav) => (
             <div
               key={fav._id}
-              className="card bg-base-100 shadow-md hover:shadow-lg transition"
+              className="group rounded-2xl p-1.5 bg-gradient-to-br from-primary via-secondary to-accent transition-all duration-400 ease-in-out hover:shadow-2xl hover:shadow-secondary/30"
             >
-              <figure>
-                <img
-                  src={fav.artwork.imageUrl || "/placeholder.png"}
-                  alt={fav.artwork.title}
-                  className="w-full h-48 object-cover"
-                />
-              </figure>
-              <div className="card-body">
-                <h3 className="card-title">{fav.artwork.title}</h3>
-                <p className="text-sm text-gray-600">
-                  👤 {fav.artwork.userName || "Unknown Artist"}
-                </p>
-                <p className="text-sm">📂 {fav.artwork.category}</p>
-                <p className="text-sm">👍 {fav.artwork.likes ?? 0} likes</p>
-                <div className="card-actions justify-between mt-2">
-                  <Link
-                    to={`/artworks/${fav.artwork._id}`}
-                    className="btn btn-sm btn-primary"
+              <div className="card bg-base-100 rounded-xl overflow-hidden shadow-lg transition-all duration-400 ease-in-out transform group-hover:-translate-y-1 h-full">
+                <figure className="h-56 overflow-hidden relative">
+                  <img
+                    src={fav.artwork.imageUrl || "/placeholder.png"}
+                    alt={fav.artwork.title}
+                    className="w-full h-full object-cover transform transition-transform duration-500 ease-in-out group-hover:scale-110"
+                  />
+                </figure>
+
+                <div className="card-body p-5">
+                  <span className="badge badge-secondary badge-outline text-xs mb-2 uppercase tracking-wide">
+                    {fav.artwork.category}
+                  </span>
+                  <h2
+                    className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent truncate h-7 mb-3"
+                    title={fav.artwork.title}
                   >
-                    View Details
-                  </Link>
-                  <button
-                    onClick={() => handleUnfavorite(fav._id)}
-                    className="btn btn-sm btn-error"
-                  >
-                    ❌ Unfavorite
-                  </button>
+                    {fav.artwork.title}
+                  </h2>
+                  <p className="text-sm text-base-content/70">
+                    By: {fav.artwork.userName || "Unknown Artist"}
+                  </p>
+                  
+                  <div className="card-actions justify-end gap-2 mt-4">
+                    <Link
+                      to={`/artworks/${fav.artwork._id}`}
+                      className="btn btn-primary btn-sm rounded-full"
+                    >
+                      <FiEye /> View
+                    </Link>
+                    <button
+                      onClick={() => handleUnfavorite(fav._id)}
+                      className="btn btn-error btn-sm rounded-full"
+                    >
+                      <FiX /> Remove
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
