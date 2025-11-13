@@ -4,7 +4,7 @@ Welcome to the client-side repository for **Artify**, a stunningly modern and re
 
 This application is built with a "modern-first" approach, emphasizing a clean, "eye-catchy" user interface, seamless navigation, and dynamic, animated content to create an engaging user experience.
 
-- **Live Site URL:** `[https://artify-your-live-url.netlify.app/]`
+- **Live Site URL:** `https://artify-d5f89.web.app/`
 - **Server-Side Repository:** `[https://github.com/connectdipta/artify-server]`
 
 ## Core Features (In-Depth)
