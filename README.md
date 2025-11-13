@@ -5,12 +5,7 @@ Welcome to the client-side repository for **Artify**, a stunningly modern and re
 This application is built with a "modern-first" approach, emphasizing a clean, "eye-catchy" user interface, seamless navigation, and dynamic, animated content to create an engaging user experience.
 
 - **Live Site URL:** `[https://artify-your-live-url.netlify.app/]`
-- **Server-Side Repository:** `[https://github.com/your-username/artify-server]`
-
-## Visual Preview
-
-![Artify Home Page Animation](https://i.imgur.com/example.gif)
-*(Recommendation: Record a short GIF of your Vanta.js home page and replace the link above to impress visitors!)*
+- **Server-Side Repository:** `[https://github.com/connectdipta/artify-server]`
 
 ## Core Features (In-Depth)
 
