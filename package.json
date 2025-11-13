@@ -25,7 +25,9 @@
     "react-simple-typewriter": "^5.0.1",
     "react-tooltip": "^5.30.0",
     "sweetalert2": "^11.26.3",
-    "swiper": "^12.0.3"
+    "swiper": "^12.0.3",
+    "three": "^0.181.1",
+    "vanta": "^0.5.24"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

@@ -51,14 +51,14 @@ const slides = [
     buttonLink: "/explore",
   },
   {
-    image: "https://i.pinimg.com/1200x/b3/76/a7/b376a73b927d815ed262d496a6566f85.jpg",
+    image: "https://i.pinimg.com/1200x/da/89/6f/da896f60e3cc1ff0efec65e9a2dbf6b2.jpg",
     title: "Digital Renaissance",
     description: "Celebrate the fusion of technology and creativity.",
     buttonText: "See The Gallery",
     buttonLink: "/explore",
   },
   {
-    image: "https://i.pinimg.com/736x/13/d9/47/13d94747f7421a36c81e01b9b6266f61.jpg",
+    image: "https://i.pinimg.com/1200x/d2/ca/11/d2ca119bc2804c1f665c1a2049dce134.jpg",
     title: "Share Your Vision",
     description: "Join our community and upload your own masterpieces.",
     buttonText: "Add Artwork",
@@ -83,14 +83,12 @@ const SlideContent = ({ title, description, buttonText, buttonLink }) => {
   return (
    <div className="hero-content text-center text-neutral-content">
      <div className="max-w-md">
-       <h1 className="mb-5 text-6xl md:text-7xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-lg">
+       <h1 className="mb-5 text-6xl text-[#F5B027] md:text-7xl font-bold  bg-clip-text  drop-shadow-lg">
          {titleText}
-         <Cursor cursorColor="oklch(var(--color-secondary))" />
        </h1>
        
        <p className="mb-5 text-xl drop-shadow-md">
          {descText}
-         <Cursor cursorStyle='_' />
        </p>
        
        <Link
