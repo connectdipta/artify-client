@@ -3,17 +3,19 @@ import { useParams, Link } from "react-router-dom";
 import { getArtworkById, likeArtwork, addFavorite } from "../services/artworks";
 import Spinner from "../components/Spinner";
 import Swal from "sweetalert2";
+import { Fade, Slide } from "react-awesome-reveal";
 import { 
   FiHeart, 
   FiStar, 
   FiArrowLeft, 
   FiTag, 
-  FiPenTool,  // <-- CHANGED from FiPaintbrush
+  FiPenTool,
   FiMaximize, 
-  FiDollarSign 
+  FiDollarSign,
+  FiMaximize2, // Added for modal
+  FiX          // Added for modal
 } from "react-icons/fi";
 
-// --- THEME FIX: Helper function to get correct SweetAlert colors ---
 const getSwalTheme = () => {
   const currentTheme = localStorage.getItem("theme") || "light";
   if (currentTheme === "dark") {
@@ -31,6 +33,7 @@ export default function ViewDetails() {
   const [loading, setLoading] = useState(true);
   const [favorited, setFavorited] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
 
   useEffect(() => {
     const fetchArtwork = async () => {
@@ -39,6 +42,7 @@ export default function ViewDetails() {
         const data = await getArtworkById(id);
         if (!data || !data._id) throw new Error("Artwork not found");
         setArtwork(data);
+        document.title = `Artify | ${data.title}`; 
 
         const likedArtworks = JSON.parse(localStorage.getItem("likedArtworks") || "[]");
         if (likedArtworks.includes(id)) setLiked(true);
@@ -119,80 +123,105 @@ export default function ViewDetails() {
     );
 
   return (
-    <div className="container mx-auto px-4 py-10 min-h-screen">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-        
-        <div className="w-full">
-          <img
-            src={artwork.imageUrl || "/placeholder.png"}
-            alt={artwork.title}
-            className="w-full h-auto max-h-[700px] object-contain rounded-2xl shadow-xl"
-          />
-        </div>
-
-        <div className="w-full">
-          <h2 className="text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            {artwork.title}
-          </h2>
-
-          <div className="flex items-center gap-3 mb-6">
+    <div className="min-h-screen bg-base-200 p-4 md:p-10 flex items-center justify-center">
+      <Fade duration={500} triggerOnce>
+        <div className="card lg:card-side bg-base-100 shadow-2xl max-w-5xl rounded-2xl overflow-hidden">
+          <figure className="lg:w-1/2 relative group">
             <img
-              src={artwork.artistPhoto || artwork.userPhotoURL || "/default-avatar.png"}
-              alt={artwork.userName || "Artist"}
-              className="w-12 h-12 rounded-full ring-2 ring-primary ring-offset-base-100 ring-offset-2"
+              src={artwork.imageUrl || "https://i.pinimg.com/736x/c1/55/ad/c155adfdca289b94644092a7176f9e88.jpg"}
+              alt={artwork.title}
+              className="w-full h-full object-cover"
             />
-            <div>
-              <p className="text-lg font-semibold">{artwork.userName || "Anonymous"}</p>
-              <p className="text-sm text-base-content/70">{artwork.userEmail || "No contact"}</p>
+            <div 
+              className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <FiMaximize2 className="text-white text-5xl" />
             </div>
-          </div>
+          </figure>
+          <div className="card-body lg:w-1/2 p-8 md:p-12">
+            <Slide direction="right" delay={200} triggerOnce>
+              <h2 className="text-4xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                {artwork.title}
+              </h2>
 
-          <div className="flex flex-wrap gap-3 mb-6">
-            <span className="badge badge-primary badge-lg">
-              <FiTag className="mr-2" /> {artwork.category}
-            </span>
-            {/* --- THIS IS THE FIX --- */}
-            {/* Changed from FiPaintbrush to FiPenTool */}
-            <span className="badge badge-secondary badge-lg">
-              <FiPenTool className="mr-2" /> {artwork.medium || "N/A"}
-            </span>
-            {artwork.dimensions && (
-              <span className="badge badge-accent badge-lg text-accent-content">
-                <FiMaximize className="mr-2" /> {artwork.dimensions}
-              </span>
-            )}
-            {artwork.price && (
-              <span className="badge badge-success badge-lg text-success-content">
-                <FiDollarSign className="mr-2" /> {artwork.price}
-              </span>
-            )}
-          </div>
+              <div className="flex items-center gap-3 mb-6">
+                <img
+                  src={artwork.userPhotoURL || "/default-avatar.png"}
+                  alt={artwork.userName || "Artist"}
+                  className="w-12 h-12 rounded-full ring-2 ring-primary ring-offset-base-100 ring-offset-2"
+                />
+                <div>
+                  <p className="text-lg font-semibold">{artwork.userName || "Anonymous"}</p>
+                  <p className="text-sm text-base-content/70">{artwork.userEmail || "No contact"}</p>
+                </div>
+              </div>
 
-          <h3 className="text-xl font-semibold mb-2">About this piece</h3>
-          <p className="text-base-content/80 leading-relaxed mb-8">
-            {artwork.description || "No description provided."}
-          </p>
+              <div className="flex flex-wrap gap-3 mb-6">
+                <span className="badge badge-primary badge-lg">
+                  <FiTag className="mr-2" /> {artwork.category}
+                </span>
+                <span className="badge badge-secondary badge-lg">
+                  <FiPenTool className="mr-2" /> {artwork.medium || "N/A"}
+                </span>
+                {artwork.dimensions && (
+                  <span className="badge badge-accent badge-lg text-accent-content">
+                    <FiMaximize className="mr-2" /> {artwork.dimensions}
+                  </span>
+                )}
+                {artwork.price && (
+                  <span className="badge badge-success badge-lg text-success-content">
+                    <FiDollarSign className="mr-2" /> {artwork.price}
+                  </span>
+                )}
+              </div>
 
-          <div className="flex flex-wrap gap-4 items-center">
-            <button
-              onClick={handleLike}
-              className="btn btn-primary btn-lg rounded-full"
-              disabled={liked}
-            >
-              <FiHeart /> {liked ? "Liked" : "Like"} ({artwork.likes ?? 0})
-            </button>
-            <button
-              onClick={handleFavorite}
-              disabled={favorited}
-              className="btn btn-secondary btn-lg rounded-full"
-            >
-              <FiStar /> {favorited ? "Favorited" : "Add to Favorites"}
-            </button>
-            <Link to="/explore" className="btn btn-ghost rounded-full">
-              <FiArrowLeft /> Back
-            </Link>
+              <h3 className="text-xl font-semibold mb-2">About this piece</h3>
+              <p className="text-base-content/80 leading-relaxed mb-8">
+                {artwork.description || "No description provided."}
+              </p>
+
+              <div className="flex flex-wrap gap-4 items-center">
+                <button
+                  onClick={handleLike}
+                  className="btn btn-primary btn-lg rounded-full"
+                  disabled={liked}
+                >
+                  <FiHeart /> {liked ? "Liked" : "Like"} ({artwork.likes ?? 0})
+                </button>
+                <button
+                  onClick={handleFavorite}
+                  disabled={favorited}
+                  className="btn btn-secondary btn-lg rounded-full"
+                >
+                  <FiStar /> {favorited ? "Favorited" : "Add to Favorites"}
+                </button>
+                <Link to="/explore" className="btn btn-ghost rounded-full">
+                  <FiArrowLeft /> Back
+                </Link>
+              </div>
+            </Slide>
           </div>
         </div>
+      </Fade>
+
+      <div className={`modal ${isModalOpen ? "modal-open" : ""}`}>
+        <div className="modal-box w-11/12 max-w-5xl p-4 relative bg-base-300">
+          <img
+            src={artwork.imageUrl || "https://i.pinimg.com/736x/c1/55/ad/c155adfdca289b94644092a7176f9e88.jpg"}
+            alt={artwork.title}
+            className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
+          />
+          <div className="modal-action absolute top-4 right-4">
+            <button 
+              onClick={() => setIsModalOpen(false)} 
+              className="btn btn-primary btn-circle btn-sm"
+            >
+              <FiX className="text-lg" />
+            </button>
+          </div>
+        </div>
+        <div className="modal-backdrop" onClick={() => setIsModalOpen(false)}></div>
       </div>
     </div>
   );
