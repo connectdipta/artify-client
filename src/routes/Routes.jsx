@@ -9,7 +9,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import NotFound from "../pages/NotFound";
 import ProtectedRoute from "../components/ProtectedRoute";
-import ViewDetails from "../pages/ViewDetails"; // ✅ fixed import
+import ViewDetails from "../pages/ViewDetails"; 
 
 const router = createBrowserRouter([
   {
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "artworks/:id", // ✅ new route
+        path: "artworks/:id",
         element: (
           <ProtectedRoute>
             <ViewDetails />

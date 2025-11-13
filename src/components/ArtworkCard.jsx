@@ -19,7 +19,7 @@ export default function ArtworkCard({ artwork }) {
         
         {/* --- Artwork Image --- */}
         {/* 'overflow-hidden' on the container clips the scaling image */}
-        <figure className="h-56 overflow-hidden relative">
+        <figure className="h-100 overflow-hidden relative">
           <img
             src={imageUrl}
             alt={artwork.title || "Artwork"}

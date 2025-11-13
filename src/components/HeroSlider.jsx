@@ -66,10 +66,7 @@ const slides = [
   },
 ];
 
-// --- THE FIRST FIX ---
-// 'isActive' prop is no longer needed
 const SlideContent = ({ title, description, buttonText, buttonLink }) => {
-  // The 'words' array is now always populated when the component mounts
   const [titleText] = useTypewriter({
     words: [title],
     loop: 1,
@@ -85,26 +82,28 @@ const SlideContent = ({ title, description, buttonText, buttonLink }) => {
 
   return (
    <div className="hero-content text-center text-neutral-content">
-  <div className="max-w-md">
-    <h1 className="mb-5 text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-lg">
-      {titleText}
-      <Cursor cursorColor="oklch(var(--color-secondary))" />
-    </h1>
-    
-    <p className="mb-5 text-lg text-base-100/90 drop-shadow-md">
-      {descText}
-      <Cursor cursorStyle='_' />
-    </p>
-    
-    <Link
-      to={buttonLink}
-      className="btn btn-primary rounded-full shadow-lg hover:scale-105 transition-transform"
-    >
-      {buttonText}
-      <FiArrowRight className="ml-1" />
-    </Link>
-  </div>
-</div>
+     <div className="max-w-md">
+       {/* CHANGED: Increased text size */}
+       <h1 className="mb-5 text-6xl md:text-7xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-lg">
+         {titleText}
+         <Cursor cursorColor="oklch(var(--color-secondary))" />
+       </h1>
+       
+       {/* CHANGED: Increased text size and made text pure white (removed /90) */}
+       <p className="mb-5 text-xl text-base-100 drop-shadow-md">
+         {descText}
+         <Cursor cursorStyle='_' />
+       </p>
+       
+       <Link
+         to={buttonLink}
+         className="btn btn-primary btn-lg rounded-full shadow-lg hover:scale-105 transition-transform"
+       >
+         {buttonText}
+         <FiArrowRight className="ml-1" />
+       </Link>
+     </div>
+   </div>
   );
 };
 
@@ -124,7 +123,8 @@ export default function HeroSlider() {
         pagination={{ clickable: true }}
         navigation={true}
         modules={[Autoplay, Pagination, Navigation, EffectFade]}
-        className="w-full h-[400px] md:h-[550px] rounded-2xl shadow-xl"
+        // CHANGED: Increased height
+        className="w-full h-[500px] md:h-[700px] rounded-2xl shadow-xl"
         onActiveIndexChange={(swiper) => {
           setActiveIndex(swiper.realIndex);
         }}
@@ -144,7 +144,6 @@ export default function HeroSlider() {
                   buttonLink={slide.buttonLink}
                 />
               )}
-
             </div>
           </SwiperSlide>
         ))}
